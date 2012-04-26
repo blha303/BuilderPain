@@ -1,0 +1,2 @@
+# Don't make this larger than 100 trillion (100000000000000). In fact, to be safe, stay well below that.
+placecost: 0.01
