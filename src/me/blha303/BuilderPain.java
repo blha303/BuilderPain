@@ -10,14 +10,12 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 public class BuilderPain extends JavaPlugin {
 	
 	private static final Logger log = Logger.getLogger("Minecraft");
 	public static BuilderPain plugin;
-    public static Economy econ = null;
-    public static Permission perms = null;
+	public static Permission permission = null;
     @Override
     public void onDisable() {
         log.info(String.format("[%s] Disabled Version %s", getDescription().getName(), getDescription().getVersion()));
@@ -25,7 +23,7 @@ public class BuilderPain extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		if (!setupEconomy()) {
+		if (!setupPermissions()) {
 			log.severe(String.format("[%s] Disabled. Vault is missing!", getDescription().getName()));
 			getServer().getPluginManager().disablePlugin(this);
 			return;
@@ -35,18 +33,6 @@ public class BuilderPain extends JavaPlugin {
 		setupPermissions();
         log.info(String.format("[%s] Enabled version %s", getDescription().getName(), getDescription().getVersion()));
 	}
-
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        econ = rsp.getProvider();
-        return econ != null;
-    }
     
     // http://stackoverflow.com/a/2275030
     public boolean contains(String haystack, String needle) {
@@ -63,17 +49,23 @@ public class BuilderPain extends JavaPlugin {
     		String bl = event.getBlockPlaced().getType().toString().toLowerCase();
     		Random random = new Random();
     		int Chance = random.nextInt(100);
-    		if (Chance >= 0) {
+    		if (Chance >= getConfig().getInt("chanceofhurt")) {
         		if (!contains(getConfig().getString("nopain"), bl)) {
-        			p.damage(getConfig().getInt("damage"));
+        			if (!permission.has(p, "builderpain.deny")) {
+            			p.damage(getConfig().getInt("damage"));
+        			}
+
         		}
     		}
     	}
     }
     
-    private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
-        perms = rsp.getProvider();
-        return perms != null;
+    private boolean setupPermissions()
+    {
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        if (permissionProvider != null) {
+            permission = permissionProvider.getProvider();
+        }
+        return (permission != null);
     }
 }
