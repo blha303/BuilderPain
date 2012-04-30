@@ -1,2 +1,4 @@
-# Don't make this larger than 100 trillion (100000000000000). In fact, to be safe, stay well below that.
-placecost: 0.01
+#nopain lists the blocks that, when placed, won't cause an injury.
+#damage is how much it'll take off (x2) 4 = 2 hearts
+nopain: torch, sign, 
+damage: 4
