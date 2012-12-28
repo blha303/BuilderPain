@@ -1,3 +1,7 @@
 name: BuilderPain
 main: me.blha303.BuilderPain
-version: 1
+version: 1.1
+permissions:
+  builderpain.deny:
+    description: Bypasses this user for BuilderPain effects
+    default: false

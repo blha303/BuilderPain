@@ -53,7 +53,7 @@ public class BuilderPain extends JavaPlugin {
         		if (!contains(getConfig().getString("nopain"), bl)) {
         			if (!permission.has(p, "builderpain.deny")) {
             			p.damage(getConfig().getInt("damage"));
-            			p.sendMessage("You feel a sharp pain in some muscle...");
+            			p.sendMessage(getConfig().getString("dmgmessage"));
         			}
 
         		}
